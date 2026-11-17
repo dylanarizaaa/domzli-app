@@ -8,12 +8,10 @@
 | [Tokens del Design System](design-system/tokens.json) | Exportación de los tokens publicados en «Domzli UI»: fuente para `src/theme/tokens.ts` | Aprobado |
 | [Registro de decisiones (ADR)](decisions/README.md) | 15 decisiones técnicas con contexto, alternativas y consecuencias | 4 aceptadas · 11 propuestas |
 
-## Antes de iniciar la Fase 1
+## Estado
 
-1. Revisar y aprobar el TAD y la especificación del Design System (o pedir cambios).
-2. Pasar a "Aceptada" los ADR 0004–0014, o reemplazarlos.
-3. Cerrar las decisiones pendientes que bloquean la Fase 1: **P-3** (participantes), **P-5** (documentos), **P-8** (*spike* de Expo Web), **P-10** (proveedor de correo), **P-12** (depósitos) y **P-13** (prórroga). Ver [TAD §16](architecture/TAD.md#16-decisiones-de-negocio-pendientes-recomendación-técnica).
-4. Solicitar la validación jurídica de los puntos marcados con ⚖️.
+- **Fase 1 en desarrollo.** Las decisiones P-3, P-5, P-8, P-10, P-12 y P-13 están cerradas ([TAD §16.1](architecture/TAD.md#161-decisiones-cerradas-por-el-propietario-del-producto-17-nov-2026)).
+- Pendiente antes de salir a usuarios reales: validación jurídica de los puntos marcados con ⚖️ y elección del proveedor de correo (P-10).
 
 Los diagramas están escritos en [Mermaid](https://mermaid.js.org/) y GitHub los muestra directamente.
 

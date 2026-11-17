@@ -1619,6 +1619,17 @@ Las decisiones 1 a 10 vienen del plan (§15). Las 11 a 14 surgen del diseño té
 | P-13 | Prórroga automática *(nueva)* | Un contrato vencido sin terminación sigue `active` (en prórroga) y sigue generando cobros. Avisos a 90, 60 y 30 días considerando los plazos legales de preaviso. | Contratos (F1) · Recordatorios (F3) | Sí |
 | P-14 | Intereses de mora *(nueva)* | No calcularlos en el MVP: solo marcar "vencido". Los intereses tienen topes legales (tasa de usura) que requieren reglas específicas. | F2 | Sí |
 
+### 16.1. Decisiones cerradas por el propietario del producto (17 nov 2026)
+
+| # | Decisión | Cómo queda implementado |
+|---|---|---|
+| P-3 | **Un inquilino por contrato.** | `lease_tenants` conserva la relación (ADR-0007), con un índice único por contrato (`lease_tenants_one_per_lease`). `activate_lease` exige exactamente un titular. Para admitir cotitulares o codeudores bastará con quitar ese índice. |
+| P-5 | **Documentos en Supabase Storage.** | Buckets privados `property-photos` y `lease-documents`, con políticas por ruta y sin borrado de contratos. |
+| P-8 | **Web: todavía no.** | El *spike* de Expo Web queda aplazado. La Fase 1 se construye y verifica para móvil; la exportación web solo se usa como comprobación de compilación. |
+| P-10 | **Proveedor de correo: sin definir.** | `create_invitation` devuelve el enlace para compartirlo manualmente (WhatsApp, copiar). La Edge Function `send-invitation` queda pendiente del proveedor. En desarrollo, Auth usa el SMTP integrado de Supabase. |
+| P-12 | **Sin depósitos**, por sus consecuencias legales. | Se eliminó `deposit_amount` del modelo. `guarantee_type` solo admite `none`, `co_signer` e `insurance_policy`. |
+| P-13 | **La prórroga debe poder realizarse.** | Un contrato vencido sigue `active` (en prórroga, `v_lease_overview.is_in_extension`) hasta que se termina o se renueva con `renew_lease`. |
+
 ---
 
 ## 17. Riesgos
