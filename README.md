@@ -5,19 +5,21 @@ Plataforma para administrar propiedades en alquiler: inmuebles, inquilinos, cont
 - **Documentación:** [`docs/`](docs/README.md) — plan de producto, arquitectura (TAD), Design System y decisiones (ADR).
 - **Estado:** Fase 1 en desarrollo.
 
-## Qué funciona hoy
+## Qué hay construido
 
 | Área | Estado |
 |---|---|
-| Base de datos de la Fase 1 (esquema, RLS, funciones, Storage) | ✅ Con 55 pruebas pgTAP |
-| Registro, inicio de sesión y creación de la organización | ✅ |
-| Inicio del arrendador (dirección Billetera) | ✅ Con datos reales de inmuebles, contratos e inquilinos |
-| Inmuebles: listar y registrar | ✅ |
-| Inquilinos: listar, registrar e invitar con enlace para compartir | ✅ |
-| Aceptar invitación y portal del inquilino (su contrato) | ✅ |
-| Contratos: asistente para crear, renovar y terminar | ⏳ Siguiente paso (el backend ya lo soporta) |
+| Base de datos de la Fase 1 (esquema, RLS, funciones, Storage) | ✅ Probada: 55 pruebas pgTAP en PostgreSQL local |
+| Registro, inicio de sesión y creación de la organización | 🟡 Implementado; falta probarlo contra un proyecto real de Supabase |
+| Inicio del arrendador (dirección Billetera) | 🟡 Implementado; la vista está verificada con datos de ejemplo |
+| Inmuebles: listar y registrar | 🟡 Implementado |
+| Inquilinos: listar, registrar e invitar con enlace para compartir | 🟡 Implementado |
+| Aceptar invitación y portal del inquilino (su contrato) | 🟡 Implementado |
+| Contratos: asistente para crear, renovar y terminar | ⏳ Siguiente paso (la base de datos ya lo soporta) |
 | Fotos y documentos, edición y archivado | ⏳ |
 | Cobros y pagos | Fase 2 |
+
+🟡 = compila, pasa tipos y lint, y su lógica pura tiene pruebas, pero aún no se ha ejecutado de extremo a extremo con un backend real ni en un teléfono.
 
 ## Requisitos
 
