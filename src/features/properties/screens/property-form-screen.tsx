@@ -1,7 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import * as React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 
 import { Screen } from '@/components/layout/screen';
 import { Alert } from '@/components/ui/alert';
@@ -15,7 +16,8 @@ import { useActiveOrganization } from '@/providers/auth-provider';
 import type { PropertyType } from '@/types/database';
 
 import { PROPERTY_TYPE_LABELS } from '../domain';
-import { useCreateProperty } from '../hooks';
+import { toPropertyFormValues } from '../api';
+import { useProperty, useSaveProperty } from '../hooks';
 import { propertyFormDefaults, propertyFormSchema, type PropertyFormValues } from '../schemas';
 
 const TYPE_OPTIONS = (Object.keys(PROPERTY_TYPE_LABELS) as PropertyType[]).map((value) => ({
@@ -25,13 +27,19 @@ const TYPE_OPTIONS = (Object.keys(PROPERTY_TYPE_LABELS) as PropertyType[]).map((
 
 export function PropertyFormScreen() {
   const router = useRouter();
+  const { id } = useLocalSearchParams<{ id?: string }>();
   const { organizationId } = useActiveOrganization();
-  const createProperty = useCreateProperty(organizationId);
-  const { control, handleSubmit, formState: { errors } } = useForm<PropertyFormValues>({
+  const existing = useProperty(organizationId, id);
+  const createProperty = useSaveProperty(organizationId, id);
+  const { control, handleSubmit, reset, formState: { errors } } = useForm<PropertyFormValues>({
     resolver: zodResolver(propertyFormSchema),
     defaultValues: propertyFormDefaults,
     mode: 'onBlur',
   });
+
+  React.useEffect(() => {
+    if (existing.data) reset(toPropertyFormValues(existing.data));
+  }, [existing.data, reset]);
 
   const onSubmit = handleSubmit(async (values) => {
     await createProperty.mutateAsync(values).then(() => router.back()).catch(() => undefined);
@@ -39,10 +47,11 @@ export function PropertyFormScreen() {
 
   return (
     <Screen
-      title="Registrar inmueble"
+      title={id ? 'Editar inmueble' : 'Registrar inmueble'}
       onBack={() => router.back()}
-      footer={<Button size="lg" loading={createProperty.isPending} onPress={() => onSubmit()}>Guardar inmueble</Button>}
+      footer={<Button size="lg" loading={createProperty.isPending} onPress={() => onSubmit()}>{id ? 'Guardar cambios' : 'Guardar inmueble'}</Button>}
     >
+      {id && existing.isPending ? <ActivityIndicator /> : null}
       {createProperty.error ? (
         <Alert tone="danger" title="No pudimos guardar el inmueble">{toAppError(createProperty.error).message}</Alert>
       ) : null}

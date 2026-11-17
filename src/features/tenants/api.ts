@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import type { TenantRow } from '@/types/database';
 
 import { toTenantSummary, type TenantSummary } from './domain';
 import type { TenantFormValues } from './schemas';
@@ -33,4 +34,31 @@ export async function createInvitation(tenantId: string): Promise<CreatedInvitat
   const row = data?.[0];
   if (!row) throw new Error('INVITATION_NOT_FOUND');
   return { token: row.token, email: row.email, organizationName: row.organization_name, expiresAt: row.expires_at };
+}
+
+export async function fetchTenant(tenantId: string): Promise<TenantRow> {
+  const { data, error } = await supabase.from('tenants').select('*').eq('id', tenantId).single();
+  if (error) throw error;
+  return data;
+}
+
+export async function updateTenant(tenantId: string, values: TenantFormValues): Promise<void> {
+  const { error } = await supabase.from('tenants').update({
+    full_name: values.fullName,
+    document_type: values.documentType,
+    document_number: values.documentNumber.replace(/[.\s]/g, ''),
+    email: values.email ? values.email.toLowerCase() : null,
+    phone: values.phone || null,
+  }).eq('id', tenantId);
+  if (error) throw error;
+}
+
+export function toTenantFormValues(row: TenantRow): TenantFormValues {
+  return {
+    fullName: row.full_name,
+    documentType: row.document_type,
+    documentNumber: row.document_number,
+    email: row.email ?? '',
+    phone: row.phone ?? '',
+  };
 }

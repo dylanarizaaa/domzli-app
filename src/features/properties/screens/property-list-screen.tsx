@@ -38,7 +38,7 @@ export function PropertyListScreen() {
         />
       ) : (
         <View className="gap-3">
-          {data.map((property) => <PropertyCard key={property.id} property={property} />)}
+          {data.map((property) => <PropertyCard key={property.id} property={property} onPress={() => router.push(`/properties/${property.id}`)} />)}
         </View>
       )}
     </Screen>

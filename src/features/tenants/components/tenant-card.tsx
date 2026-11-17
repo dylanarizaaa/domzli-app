@@ -11,12 +11,13 @@ import type { TenantSummary } from '../domain';
 
 export type TenantCardProps = {
   tenant: TenantSummary;
+  onEdit?: () => void;
   inviting?: boolean;
   onInvite?: () => void;
 };
 
 /** Ficha resumida de un inquilino con su estado de acceso y la acción de invitar. */
-export function TenantCard({ tenant, inviting, onInvite }: TenantCardProps) {
+export function TenantCard({ tenant, inviting, onInvite, onEdit }: TenantCardProps) {
   const canInvite = tenant.access !== 'linked';
   return (
     <Card className="gap-3 p-4">
@@ -28,6 +29,9 @@ export function TenantCard({ tenant, inviting, onInvite }: TenantCardProps) {
         </View>
         <StatusBadge entity="access" status={tenant.access} size="sm" />
       </View>
+      {onEdit ? (
+        <Button variant="ghost" size="sm" iconStart="pencil" className="self-start px-0" onPress={onEdit}>Editar datos</Button>
+      ) : null}
       {tenant.phone ? (
         <View className="flex-row items-center gap-1.5">
           <Icon name="phone" size={16} className="text-muted-foreground" />

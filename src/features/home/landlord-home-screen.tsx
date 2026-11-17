@@ -5,6 +5,7 @@ import { ActivityIndicator, Alert as NativeAlert, View } from 'react-native';
 
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { useCharges, useFinanceOverview, usePayments, useSyncCharges } from '@/features/finance';
 import { useProperties } from '@/features/properties';
 import { useTenants } from '@/features/tenants';
 import { toAppError } from '@/lib/errors';
@@ -36,10 +37,18 @@ export function LandlordHomeScreen() {
   const properties = useProperties(organizationId);
   const tenants = useTenants(organizationId);
   const leases = useActiveLeases(organizationId);
+  useSyncCharges(organizationId, true);
+  const overview = useFinanceOverview(organizationId);
+  const inReview = usePayments(organizationId, { status: 'in_review' });
+  const openCharges = useCharges(organizationId, { openOnly: true });
 
   const home = React.useMemo(
-    () => buildLandlordHome(properties.data ?? [], leases.data ?? [], tenants.data ?? []),
-    [properties.data, leases.data, tenants.data],
+    () => buildLandlordHome(properties.data ?? [], leases.data ?? [], tenants.data ?? [], overview.data ? {
+      overview: overview.data,
+      inReview: inReview.data ?? [],
+      overdue: (openCharges.data ?? []).filter((c) => c.displayStatus === 'overdue'),
+    } : undefined),
+    [properties.data, leases.data, tenants.data, overview.data, inReview.data, openCharges.data],
   );
 
   const error = properties.error ?? tenants.error ?? leases.error;
@@ -62,7 +71,11 @@ export function LandlordHomeScreen() {
       case 'tenants': return router.push('/tenants');
       case 'new-tenant': return router.push('/tenants/new');
       case 'leases': return router.push('/leases');
-      case 'new-lease': return router.push('/leases');
+      case 'new-lease': return router.push('/leases/new');
+      case 'finance': return router.push('/finance');
+      case 'payments': return router.push('/payments');
+      case 'new-payment': return router.push('/payments/new');
+      case 'new-charge': return router.push('/charges/new');
       case 'account': return router.push('/account');
       case 'soon': return NativeAlert.alert(label ?? 'Próximamente', 'Esta sección llega en una próxima versión de Domzli.');
     }

@@ -1630,6 +1630,25 @@ Las decisiones 1 a 10 vienen del plan (§15). Las 11 a 14 surgen del diseño té
 | P-12 | **Sin depósitos**, por sus consecuencias legales. | Se eliminó `deposit_amount` del modelo. `guarantee_type` solo admite `none`, `co_signer` e `insurance_policy`. |
 | P-13 | **La prórroga debe poder realizarse.** | Un contrato vencido sigue `active` (en prórroga, `v_lease_overview.is_in_extension`) hasta que se termina o se renueva con `renew_lease`. |
 
+### 16.2. Decisiones aplicadas en la Fase 2 según la recomendación técnica
+
+Estas decisiones no las cerró el propietario del producto: se aplicó la recomendación de §16 y se pueden cambiar en una migración nueva si se decide otra cosa.
+
+| # | Cómo queda implementado | Dónde |
+|---|---|---|
+| P-1 | `administration_mode = 'separate'` agrega un ítem `administration` a cada cobro programado; `included` y `none` no. | `private.generate_charges_for_lease` |
+| P-2 | **Vivienda:** `apply_rent_adjustment` exige 12 meses sin reajuste y un aumento que no supere el IPC del año anterior (`ipc_annual`, con 2022–2024 precargados). **Comercial:** libre. Las rebajas siempre se permiten. No se reajusta un período que ya tiene cobro. El sistema no aplica reajustes solo: los confirma el arrendador. ⚖️ | `apply_rent_adjustment`, `private.rent_at` |
+| P-4 | Abonos permitidos. Un pago se aplica a los cobros elegidos o, si no se elige ninguno, del vencimiento más antiguo al más reciente. Sin saldo a favor: el monto no puede superar lo pendiente, descontando lo que ya está comprometido por pagos en revisión. | `report_payment`, `private.pending_allocated` |
+| P-11 | **Mes calendario.** El primer período se prorratea por días y se redondea al peso. El vencimiento es el `payment_day` del mes (el último día si el mes es más corto), nunca antes del inicio del período. Los cobros se generan 5 días antes del inicio del período, una sola vez por período (índice único `charges_one_scheduled_per_period`). | `private.generate_charges_for_lease` |
+| P-14 | Sin intereses de mora: un cobro abierto con vencimiento pasado se marca "vencido" (`v_charge_balances.is_overdue`). ⚖️ | `v_charge_balances` |
+
+Además:
+
+- **`leases.billing_start_date`:** para un contrato que ya venía corriendo antes de llegar a Domzli, los cobros empiezan en esa fecha y no se generan los meses anteriores. El asistente lo propone (primer día del mes actual) cuando la fecha de inicio es anterior.
+- **Pagos del inquilino:** quedan `in_review` y exigen comprobante (bucket privado `payment-receipts`). El arrendador los aprueba o los rechaza con motivo; el inquilino puede cancelar los que siguen en revisión. Los pagos que registra el arrendador se aprueban de inmediato. Solo el propietario de la organización puede revertir un pago aprobado.
+- **Terminar un contrato** anula los cobros posteriores a la fecha de terminación que no tengan pagos.
+- **Tarea programada:** la migración programa `generate-due-charges` (diaria, 05:00 de Colombia) y `expire-invitations` (cada hora) si `pg_cron` está disponible. Si no lo está, la app pone los cobros al día al abrir Inicio o Finanzas (`generate_due_charges`, idempotente).
+
 ---
 
 ## 17. Riesgos

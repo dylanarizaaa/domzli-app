@@ -59,7 +59,8 @@ export function TenantListScreen() {
       ) : (
         <View className="gap-3">
           {data.map((tenant) => (
-            <TenantCard key={tenant.id} tenant={tenant} inviting={invitingId === tenant.id} onInvite={() => invite(tenant.id)} />
+            <TenantCard key={tenant.id} tenant={tenant} inviting={invitingId === tenant.id} onInvite={() => invite(tenant.id)}
+              onEdit={() => router.push(`/tenants/${tenant.id}`)} />
           ))}
         </View>
       )}

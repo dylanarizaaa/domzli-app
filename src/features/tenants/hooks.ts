@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { createInvitation, createTenant, fetchTenants } from './api';
+import { createInvitation, createTenant, fetchTenant, fetchTenants, updateTenant } from './api';
 import type { TenantFormValues } from './schemas';
 
 export const tenantKeys = {
@@ -12,10 +12,18 @@ export function useTenants(organizationId: string) {
   return useQuery({ queryKey: tenantKeys.list(organizationId), queryFn: () => fetchTenants(organizationId) });
 }
 
-export function useCreateTenant(organizationId: string) {
+export function useTenant(organizationId: string, tenantId: string | undefined) {
+  return useQuery({
+    queryKey: [...tenantKeys.all(organizationId), 'detail', tenantId ?? ''],
+    queryFn: () => fetchTenant(tenantId!),
+    enabled: Boolean(tenantId),
+  });
+}
+
+export function useCreateTenant(organizationId: string, tenantId?: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (values: TenantFormValues) => createTenant(organizationId, values),
+    mutationFn: (values: TenantFormValues) => (tenantId ? updateTenant(tenantId, values) : createTenant(organizationId, values)),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['org', organizationId] }),
   });
 }

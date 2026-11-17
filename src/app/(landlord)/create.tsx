@@ -5,13 +5,14 @@ import { Screen } from '@/components/layout/screen';
 import { Icon, type IconName } from '@/components/ui/icon';
 import { Text } from '@/components/ui/text';
 
-type Option = { key: string; label: string; description: string; icon: IconName; href?: '/properties/new' | '/tenants/new' };
+type Option = { key: string; label: string; description: string; icon: IconName; href?: '/properties/new' | '/tenants/new' | '/leases/new' | '/payments/new' | '/charges/new' };
 
 const OPTIONS: Option[] = [
   { key: 'property', label: 'Inmueble', description: 'Registra un inmueble para arrendar.', icon: 'building-2', href: '/properties/new' },
   { key: 'tenant', label: 'Inquilino', description: 'Guarda los datos de un inquilino.', icon: 'user-plus', href: '/tenants/new' },
-  { key: 'lease', label: 'Contrato', description: 'Próximamente: une un inmueble con su inquilino.', icon: 'file-pen' },
-  { key: 'payment', label: 'Pago', description: 'Próximamente: registra un pago recibido.', icon: 'receipt' },
+  { key: 'lease', label: 'Contrato', description: 'Une un inmueble disponible con su inquilino.', icon: 'file-pen', href: '/leases/new' },
+  { key: 'payment', label: 'Pago', description: 'Registra un pago que ya recibiste.', icon: 'receipt', href: '/payments/new' },
+  { key: 'charge', label: 'Cobro', description: 'Un cobro extra, como una reparación a cargo del inquilino.', icon: 'circle-dollar-sign', href: '/charges/new' },
 ];
 
 /** Hoja del botón central "Crear". */

@@ -1,8 +1,9 @@
 import {
-  Banknote, Bell, Building2, CalendarClock, CalendarDays, ChevronLeft, ChevronRight, CircleAlert, CircleCheck,
-  CircleDashed, CircleDollarSign, CircleMinus, CircleUser, Clock, Copy, DoorOpen, Ellipsis, Eye, EyeOff, FileCheck,
-  FilePen, FileText, FileX, FolderOpen, House, Info, KeyRound, LogOut, Mail, MapPin, Phone, Plus, Receipt, RotateCcw,
-  Search, Share2, TrendingUp, TriangleAlert, UserPlus, Users, Wallet, Wrench, X, type LucideIcon,
+  Ban, Banknote, Bell, Building2, CalendarClock, CalendarDays, Camera, ChevronLeft, ChevronRight, CircleAlert,
+  CircleCheck, CircleDashed, CircleDollarSign, CircleMinus, CircleUser, CircleX, Clock, Copy, CreditCard, DoorOpen,
+  Ellipsis, Eye, EyeOff, FileCheck, FilePen, FileText, FileX, FolderOpen, House, Image as ImageIcon, Info, KeyRound,
+  Landmark, LogOut, Mail, MapPin, Paperclip, Pencil, Phone, Plus, Receipt, RotateCcw, Search, Share2, Smartphone,
+  Trash2, TrendingUp, TriangleAlert, Undo2, Upload, UserPlus, Users, Wallet, Wrench, X, Zap, type LucideIcon,
 } from 'lucide-react-native';
 import { cssInterop } from 'nativewind';
 
@@ -10,7 +11,20 @@ import { cn } from '@/lib/cn';
 
 /** Iconos de Lucide disponibles en la app, por su nombre en kebab-case. */
 const ICONS = {
+  ban: Ban,
   banknote: Banknote,
+  camera: Camera,
+  'circle-x': CircleX,
+  'credit-card': CreditCard,
+  image: ImageIcon,
+  landmark: Landmark,
+  paperclip: Paperclip,
+  pencil: Pencil,
+  smartphone: Smartphone,
+  'trash-2': Trash2,
+  'undo-2': Undo2,
+  upload: Upload,
+  zap: Zap,
   bell: Bell,
   'building-2': Building2,
   'calendar-clock': CalendarClock,

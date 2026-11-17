@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import type { FinanceOverview } from '@/features/finance/domain';
 import type { PropertySummary } from '@/features/properties/domain';
 import type { TenantSummary } from '@/features/tenants/domain';
 
@@ -51,6 +52,38 @@ describe('buildLandlordHome', () => {
     expect(home.highlights[0]).toMatchObject({ tone: 'orange', title: 'Inmueble 2 venció hace 12 días' });
     expect(home.highlights[1]).toMatchObject({ tone: 'aqua', title: 'Inmueble 1 vence en 28 días' });
     expect(home.highlights[2].title).toBe('Invita a Inquilino b');
+  });
+
+  it('sin cobros del mes, la cifra protagonista es el canon esperado', () => {
+    const home = buildLandlordHome([property('1', 'leased')], [lease('1')], []);
+    expect(home.header).toMatchObject({ label: 'Canon mensual esperado', amountCents: 100000000, caption: '1 de 1 inmueble arrendado' });
+    expect(home.inReviewCount).toBe(0);
+  });
+
+  it('con cobros: muestra lo recaudado y pone primero los pagos por revisar y los vencidos', () => {
+    const overview: FinanceOverview = {
+      monthStart: '2026-11-01', expectedCents: 400000000, collectedCents: 100000000, pendingCents: 300000000,
+      overdueCents: 150000000, overdueCount: 2, inReviewCount: 1, inReviewCents: 50000000,
+    };
+    const home = buildLandlordHome(
+      [property('1', 'leased'), property('2', 'leased')],
+      [lease('1', { days_to_end: 20, is_expiring_soon: true })],
+      [],
+      {
+        overview,
+        inReview: [{ amountCents: 50000000, tenantName: 'Ana Gómez', reporterName: 'Ana Gómez' }],
+        overdue: [
+          { id: 'x', balanceCents: 50000000, availableCents: 50000000, tenantName: 'Luis', propertyName: 'Casa', daysOverdue: 3 },
+          { id: 'y', balanceCents: 100000000, availableCents: 100000000, tenantName: 'Marta', propertyName: 'Apto', daysOverdue: 12 },
+          { id: 'z', balanceCents: 50000000, availableCents: 0, tenantName: 'Pedro', propertyName: 'Local', daysOverdue: 30 },
+        ],
+      },
+    );
+    expect(home.header).toMatchObject({ label: 'Recaudado en noviembre', amountCents: 100000000, caption: '25 % de $ 4.000.000 esperados' });
+    expect(home.inReviewCount).toBe(1);
+    expect(home.highlights.map((h) => h.key)).toEqual(['payments-in-review', 'overdue-y', 'overdue-x', 'expiring-1']);
+    expect(home.highlights[0]).toMatchObject({ title: '1 pago espera tu aprobación', meta: '$ 500.000 · Ana Gómez', target: 'finance' });
+    expect(home.highlights[1]).toMatchObject({ title: 'Marta debe $ 1.000.000', meta: 'Apto · hace 12 días' });
   });
 
   it('no muestra nada cuando todo está al día', () => {

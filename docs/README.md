@@ -10,8 +10,9 @@
 
 ## Estado
 
-- **Fase 1 en desarrollo.** Las decisiones P-3, P-5, P-8, P-10, P-12 y P-13 están cerradas ([TAD §16.1](architecture/TAD.md#161-decisiones-cerradas-por-el-propietario-del-producto-17-nov-2026)).
-- Pendiente antes de salir a usuarios reales: validación jurídica de los puntos marcados con ⚖️ y elección del proveedor de correo (P-10).
+- **Fases 1 y 2 implementadas** (contratos, cobros y pagos). Las decisiones P-3, P-5, P-8, P-10, P-12 y P-13 están cerradas ([TAD §16.1](architecture/TAD.md#161-decisiones-cerradas-por-el-propietario-del-producto-17-nov-2026)); P-1, P-2, P-4, P-11 y P-14 se aplicaron según la recomendación técnica ([TAD §16.2](architecture/TAD.md#162-decisiones-aplicadas-en-la-fase-2-según-la-recomendación-técnica)).
+- Pendiente antes de salir a usuarios reales: validación jurídica de los puntos marcados con ⚖️ (reajustes por IPC y mora, entre otros) y elección del proveedor de correo (P-10).
+- Fase 3 (pasarela de pago, correos y push) depende de P-7 y P-10.
 
 Los diagramas están escritos en [Mermaid](https://mermaid.js.org/) y GitHub los muestra directamente.
 

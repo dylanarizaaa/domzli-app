@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { daysBetween, formatDateShort, formatDMY, formatPeriod, isValidISODate, parseDMY, parseISODate, toISODate } from './dates';
+import { daysBetween, formatDateShort, formatDMY, formatPeriod, isValidISODate, maskDMY, parseDMY, parseISODate, toISODate } from './dates';
 
 describe('dates', () => {
   it('interpreta YYYY-MM-DD en hora local, sin correr el día', () => {
@@ -25,5 +25,14 @@ describe('dates', () => {
   it('cuenta días calendario entre fechas', () => {
     expect(daysBetween('2026-11-17', '2026-12-15')).toBe(28);
     expect(daysBetween('2026-11-17', '2026-11-14')).toBe(-3);
+  });
+});
+
+describe('maskDMY', () => {
+  it('inserta las barras mientras se escribe', () => {
+    expect(maskDMY('05')).toBe('05');
+    expect(maskDMY('0511')).toBe('05/11');
+    expect(maskDMY('05112026')).toBe('05/11/2026');
+    expect(maskDMY('05/11/2026 extra 99')).toBe('05/11/2026');
   });
 });

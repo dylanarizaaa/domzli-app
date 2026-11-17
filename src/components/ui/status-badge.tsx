@@ -18,6 +18,20 @@ const STATUS = {
     extension: { label: 'En prórroga', tone: 'warning', icon: 'calendar-clock' },
     terminated: { label: 'Finalizado', tone: 'neutral', icon: 'file-x' },
   },
+  charge: {
+    pending: { label: 'Pendiente', tone: 'neutral', icon: 'clock' },
+    overdue: { label: 'Vencido', tone: 'danger', icon: 'circle-alert' },
+    partially_paid: { label: 'Abonado', tone: 'warning', icon: 'circle-dashed' },
+    paid: { label: 'Pagado', tone: 'success', icon: 'circle-check' },
+    void: { label: 'Anulado', tone: 'neutral', icon: 'ban' },
+  },
+  payment: {
+    in_review: { label: 'En revisión', tone: 'warning', icon: 'clock' },
+    approved: { label: 'Aprobado', tone: 'success', icon: 'circle-check' },
+    rejected: { label: 'Rechazado', tone: 'danger', icon: 'circle-x' },
+    cancelled: { label: 'Retirado', tone: 'neutral', icon: 'undo-2' },
+    reversed: { label: 'Revertido', tone: 'neutral', icon: 'rotate-ccw' },
+  },
   access: {
     linked: { label: 'Con acceso', tone: 'success', icon: 'circle-check' },
     invited: { label: 'Invitación enviada', tone: 'info', icon: 'mail' },

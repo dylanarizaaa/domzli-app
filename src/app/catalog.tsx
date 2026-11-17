@@ -34,6 +34,14 @@ const HOME = buildLandlordHome(
     { id: 'l2', monthly_rent: 2100000, administration_mode: 'included', administration_value: 0, property_name: 'Apto 802 Cedritos', tenant_name: 'María Gómez', days_to_end: 28, is_expiring_soon: true, is_in_extension: false },
   ],
   TENANTS,
+  {
+    overview: {
+      monthStart: '2026-11-01', expectedCents: 353000000, collectedCents: 143000000, pendingCents: 210000000,
+      overdueCents: 210000000, overdueCount: 1, inReviewCount: 1, inReviewCents: 210000000,
+    },
+    inReview: [{ amountCents: 210000000, tenantName: 'María Gómez', reporterName: 'María Gómez' }],
+    overdue: [],
+  },
 );
 
 type CatalogView = 'home' | 'components';

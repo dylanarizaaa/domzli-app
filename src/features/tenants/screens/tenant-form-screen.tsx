@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import * as React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { Screen } from '@/components/layout/screen';
@@ -12,7 +13,8 @@ import { toAppError } from '@/lib/errors';
 import { useActiveOrganization } from '@/providers/auth-provider';
 import type { IdDocumentType } from '@/types/database';
 
-import { useCreateTenant } from '../hooks';
+import { toTenantFormValues } from '../api';
+import { useCreateTenant, useTenant } from '../hooks';
 import { tenantFormDefaults, tenantFormSchema, type TenantFormValues } from '../schemas';
 
 const DOCUMENT_OPTIONS: { value: IdDocumentType; label: string }[] = [
@@ -25,13 +27,19 @@ const DOCUMENT_OPTIONS: { value: IdDocumentType; label: string }[] = [
 
 export function TenantFormScreen() {
   const router = useRouter();
+  const { id } = useLocalSearchParams<{ id?: string }>();
   const { organizationId } = useActiveOrganization();
-  const createTenant = useCreateTenant(organizationId);
-  const { control, handleSubmit, formState: { errors } } = useForm<TenantFormValues>({
+  const existing = useTenant(organizationId, id);
+  const createTenant = useCreateTenant(organizationId, id);
+  const { control, handleSubmit, reset, formState: { errors } } = useForm<TenantFormValues>({
     resolver: zodResolver(tenantFormSchema),
     defaultValues: tenantFormDefaults,
     mode: 'onBlur',
   });
+
+  React.useEffect(() => {
+    if (existing.data) reset(toTenantFormValues(existing.data));
+  }, [existing.data, reset]);
 
   const onSubmit = handleSubmit(async (values) => {
     await createTenant.mutateAsync(values).then(() => router.back()).catch(() => undefined);
@@ -41,9 +49,9 @@ export function TenantFormScreen() {
 
   return (
     <Screen
-      title="Registrar inquilino"
+      title={id ? 'Editar inquilino' : 'Registrar inquilino'}
       onBack={() => router.back()}
-      footer={<Button size="lg" loading={createTenant.isPending} onPress={() => onSubmit()}>Guardar inquilino</Button>}
+      footer={<Button size="lg" loading={createTenant.isPending} onPress={() => onSubmit()}>{id ? 'Guardar cambios' : 'Guardar inquilino'}</Button>}
     >
       {appError ? (
         <Alert tone="danger" title="No pudimos guardar el inquilino">
