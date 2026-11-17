@@ -2,9 +2,12 @@
 
 | Campo | Valor |
 |---|---|
-| Versión | 1.0 — borrador para revisión |
+| Versión | 1.1 — dirección visual "Billetera" aprobada |
 | Fecha | 17 de noviembre de 2026 |
 | Documento fuente | [Plan de producto y arquitectura v2.0](../product/plan-producto-v2.md), §6 |
+| Dirección visual | Billetera digital (super-app) para las pantallas de inicio · [ADR-0015](../decisions/0015-direccion-visual-billetera.md) |
+| Referencias publicadas | [Design System «Domzli UI»](https://claude.ai/artifact/Gj2FkdB6pDUBzHmZR829jm) (tokens y componentes en vivo) · [Lienzo «Domzli · Inicio móvil»](https://claude.ai/artifact/J5FLLzLEBaBbWwhUFX4khw), versión D (privados: se comparten desde claude.ai) |
+| Tokens exportados | [`tokens.json`](tokens.json): fuente para `src/theme/tokens.ts` |
 | Documentos relacionados | [TAD](../architecture/TAD.md) · [ADR-0009: Design System propio](../decisions/0009-design-system-propio.md) |
 | Plataformas | iOS, Android y Web (mobile-first) |
 | Estado | Propuesto |
@@ -24,6 +27,7 @@
 9. [Contenido y formatos](#9-contenido-y-formatos)
 10. [Gobernanza](#10-gobernanza)
 11. [Hoja de ruta por fase](#11-hoja-de-ruta-por-fase)
+12. [Registro de cambios](#12-registro-de-cambios)
 
 ---
 
@@ -37,6 +41,7 @@
 | **Tokens primero** | Ningún color, tamaño o espaciado se escribe a mano fuera de los tokens. | Lint que prohíbe colores hexadecimales en `src/features` y `src/app`. |
 | **Mobile-first, escritorio digno** | Se diseña para 360 pt de ancho y se adapta hacia arriba. En escritorio aparecen tablas, barra lateral y atajos de teclado. | Cada componente documenta su comportamiento en los tres tamaños. |
 | **Accesible por defecto** | Contraste AA, objetivos táctiles ≥ 44 pt, foco visible y roles ARIA vienen incluidos en el componente. | Lista de verificación de la sección 8. |
+| **Expresivo donde importa** | Las pantallas de inicio usan la dirección Billetera: color de marca, cifras grandes y formas generosas. Listados, formularios y detalles siguen siendo sobrios. | El degradado y los colores `module-*` y `highlight-*` solo aparecen en los componentes del grupo Billetera (5.11). |
 
 ---
 
@@ -75,7 +80,7 @@ flowchart TB
 | Hojas inferiores | `@gorhom/bottom-sheet` (nativo) | En web se sustituye por `Dialog` (sección 7.9). |
 | Listas largas | `@shopify/flash-list` | Inmuebles, cobros, pagos. |
 | Imágenes | `expo-image` | Caché, *placeholders* y transiciones. |
-| Fuentes | `expo-font` + `@expo-google-fonts/inter` | Incrustadas en el binario con el *config plugin*. |
+| Fuentes | `expo-font` + `@expo-google-fonts/inter` + `@expo-google-fonts/sora` | Incrustadas en el binario con el *config plugin*. |
 
 Regla del plan (§6.3): **no se añade una dependencia si un componente propio sencillo es suficiente.** Las de esta tabla resuelven problemas difíciles (foco, gestos, virtualización) y están justificadas.
 
@@ -233,6 +238,25 @@ Decisiones:
 - **Los *placeholders* usan `muted-foreground`** (≥ 4,5:1) y nunca sustituyen a la etiqueta.
 - **Modo oscuro:** los tokens se definen desde ahora porque su costo es bajo, pero **se activa en F3** tras su control de calidad (el plan lo trata como capacidad futura). Hasta entonces, `userInterfaceStyle: 'light'` en la configuración de la app.
 
+### 3.3.1. Tokens de la dirección Billetera
+
+Solo los usan los componentes del grupo Billetera (5.11). Contraste verificado en ambos temas.
+
+| Token | Claro | Oscuro | Uso |
+|---|---|---|---|
+| `hero-start` · `hero-mid` · `hero-end` | brand-600 · brand-700 · brand-800 | brand-900 · brand-950 · neutral-975 | Degradado de `BalanceHeader` (160°). Es el **único** degradado del sistema. |
+| `hero-foreground` | neutral-0 | neutral-0 | Saldo, iconos y texto principal sobre el encabezado (≥ 5,6:1). |
+| `hero-muted` | brand-100 | brand-200 | Etiqueta del saldo y organización (≥ 4,8:1). |
+| `hero-border` | brand-300 | brand-400 | Borde de los botones sobre el encabezado (≥ 3:1). |
+| `hero-chip` | `rgba(0, 0, 0, 0.22)` | `rgba(255, 255, 255, 0.12)` | Fondo de la píldora de avance. |
+| `module-{properties, tenants, leases, charges, expenses, documents, reports, more}` | Tintes suaves: `#eef1ff`, `#e3f6ee`, `#ffefe6`, `#fff4d6`, `#fceaf2`, `#e6f2fc`, `#f0edff`, `#f1f2f4` | Tintes profundos: `#141b52`, `#052e20`, `#3a1606`, `#332300`, `#3b0d24`, `#0b2742`, `#1e1650`, `#33373e` | Fondo del cuadro de cada módulo en "Gestión". Color de **identidad**, nunca de estado. |
+| `module-*-foreground` | `#4859dd`, `#0b7a55`, `#c2410c`, `#8a5a00`, `#b0306e`, `#1a68b0`, `#5b47d1`, `#42464f` | `#adbfff`, `#7dd3b0`, `#fdba8c`, `#f5c451`, `#f5a3c7`, `#93c5f5`, `#b7a9ff`, `#dadce1` | Icono del módulo (≥ 4,6:1 en claro; ≥ 7,8:1 en oscuro). |
+| `highlight-night` / `-foreground` / `-muted` | brand-950 / neutral-0 / brand-300 | brand-900 / neutral-0 / brand-300 | Tarjeta del carrusel para **pagos por revisar**. |
+| `highlight-orange` / `-foreground` | `#eb6834` / `#1a0b03` | igual | Tarjeta para **cobros vencidos**; contadores sobre el encabezado y la barra (6,0:1). No es el rojo de estado. |
+| `highlight-aqua` / `-foreground` | `#1baf7a` / `#04261a` | igual | Tarjeta para **contratos por vencer** (5,8:1). |
+
+Sobre `highlight-orange` y `highlight-aqua` el texto es siempre oscuro, nunca blanco.
+
 ### 3.4. Color de estados del dominio
 
 Un estado siempre se muestra con **etiqueta + icono + tono**. El tono usa las variantes *subtle* del `Badge`.
@@ -287,14 +311,22 @@ Validada con el validador de paletas: banda de luminosidad, croma mínimo, separ
 
 ### 3.6. Tipografía
 
-**Familia: Inter** (Rasmus Andersson, licencia OFL). Alta legibilidad en tamaños pequeños, soporte completo del español y **cifras tabulares** (`tnum`) para alinear montos.
+**Dos familias**, ambas con licencia OFL y cifras tabulares (`tnum`) para alinear montos:
+
+- **Sora** (`display`): cifras protagonistas y títulos. Geométrica y con carácter; da a los montos la presencia de una app financiera.
+- **Inter** (`sans`): todo lo demás. Alta legibilidad en tamaños pequeños y soporte completo del español.
+
+Sora nunca se usa en párrafos, etiquetas ni botones.
 
 | Rol | Tamaño / interlineado | Peso | Espaciado | Uso |
 |---|---|---|---|---|
-| `display` | 32/40 · 36/44 desde `lg` | 700 | −0,5 | Cifra protagonista del dashboard |
+| `balance` | 40/48 | 700 | −1 | Saldo del `BalanceHeader` (Sora) |
+| `display` | 32/40 · 36/44 desde `lg` | 700 | −0,5 | Cifras grandes fuera del encabezado (Sora) |
 | `h1` | 28/36 | 700 | −0,25 | Título grande de pantalla principal |
 | `h2` | 22/28 | 600 | 0 | Título de sección |
 | `h3` | 18/24 | 600 | 0 | Título de diálogo o tarjeta destacada |
+| `section` | 17/24 | 600 | 0 | Título de sección del inicio, `SectionHeader` (Sora) |
+| `highlight-title` | 19/25 | 700 | 0 | Título de las tarjetas del carrusel (Sora) |
 | `title` | 16/24 | 600 | 0 | Título de ítem de lista o tarjeta |
 | `body` | 16/24 | 400 | 0 | Texto general y valores de formulario |
 | `body-sm` | 14/20 | 400 | 0 | Texto secundario, celdas de tabla en web |
@@ -304,7 +336,7 @@ Validada con el validador de paletas: banda de luminosidad, croma mínimo, separ
 
 Reglas:
 
-- **Pesos como familias.** Android no sintetiza pesos de fuentes personalizadas, así que cada peso es una familia: `font-sans` (400), `font-sans-medium` (500), `font-sans-semibold` (600) y `font-sans-bold` (700). Las utilidades `font-medium`, `font-semibold` y `font-bold` están prohibidas por lint.
+- **Pesos como familias.** Android no sintetiza pesos de fuentes personalizadas, así que cada peso es una familia: `font-sans` (400), `font-sans-medium` (500), `font-sans-semibold` (600) y `font-sans-bold` (700); y para Sora, `font-display-semibold` (600) y `font-display-bold` (700). `h1`, `h2` y `h3` también van en Sora. Las utilidades `font-medium`, `font-semibold` y `font-bold` están prohibidas por lint.
 - **Cifras:** todo monto usa `tabular-nums` (lo aplica `MoneyText`).
 - **Tamaño mínimo:** 12 pt. **En campos de texto en web móvil, 16 px como mínimo**, para que Safari en iOS no haga zoom al enfocar.
 - **Texto dinámico:** se respeta el tamaño de fuente del sistema. Solo en componentes densos (pestañas, *badges*) se limita con `maxFontSizeMultiplier={1.5}`. Las pantallas se prueban al 200 %.
@@ -334,7 +366,10 @@ Escala base de **4 pt** (la escala por defecto de Tailwind: `1` = 4 pt). Pasos p
 | `rounded-md` | 8 | Botones, campos, *selects* |
 | `rounded-lg` | 12 | Tarjetas, alertas, imágenes |
 | `rounded-xl` | 16 | Diálogos y hojas inferiores (esquinas superiores) |
-| `rounded-full` | 9999 | Avatares, *switch*, indicadores |
+| `rounded-2xl` | 20 | Tarjeta flotante de acciones y cuadros de módulo (Billetera) |
+| `rounded-3xl` | 24 | Tarjetas del carrusel (Billetera) |
+| `rounded-4xl` | 32 | Esquinas inferiores del encabezado con saldo (Billetera) |
+| `rounded-full` | 9999 | Avatares, *switch*, píldoras, indicadores y botón central |
 
 ### 3.9. Bordes
 
@@ -351,6 +386,8 @@ El minimalismo pide **bordes antes que sombras**. Solo tres niveles:
 | `elevation-0` | Tarjetas, listas | Sin sombra; borde `border` |
 | `elevation-1` | Menús, *popovers*, *selects* abiertos | `0 4px 12px rgb(15 18 22 / 0.08), 0 1px 3px rgb(15 18 22 / 0.06)` |
 | `elevation-2` | Diálogos, hojas inferiores, *toasts* | `0 12px 32px rgb(15 18 22 / 0.12)` |
+| `elevation-float` | Solo la tarjeta flotante de acciones (Billetera) | `0 10px 28px rgb(34 43 120 / 0.16)` |
+| `fab-shadow` | Solo el botón central de la barra, junto con un anillo de 8 px del color `card` | `0 12px 24px rgb(72 89 221 / 0.35)` |
 
 Se implementan con la propiedad de estilo `boxShadow` (React Native ≥ 0.76 con la Nueva Arquitectura), que funciona igual en las tres plataformas. **En modo oscuro las sombras no se ven**: la elevación se expresa con una superficie más clara (`card` → `popover`) y borde.
 
@@ -362,7 +399,9 @@ Se implementan con la propiedad de estilo `boxShadow` (React Native ≥ 0.76 con
 | Altura de controles | `sm` 36 · `md` 44 (40 desde `lg`) · `lg` 52 |
 | Iconos | 16 (en línea, *badges*) · 20 (por defecto en controles y listas) · 24 (navegación, encabezados) · 32 (estados vacíos) |
 | Avatares | 24 · 32 · 40 · 56 |
-| Barra inferior de navegación | 56 + área segura inferior |
+| Barra inferior (`TabBar`) | 76 + área segura inferior; botón central de 60 que sobresale 40 |
+| Cuadro de módulo (`ModuleGrid`) | 56 × 56 |
+| Tarjeta del carrusel (`HighlightCard`) | 286 × 156: deja asomar la siguiente |
 | Encabezado móvil | 56 (título estándar) · 96 (título grande) |
 | Barra lateral web | 256 (expandida) · 72 (riel) |
 
@@ -468,6 +507,8 @@ module.exports = {
         'sans-medium': ['Inter_500Medium'],
         'sans-semibold': ['Inter_600SemiBold'],
         'sans-bold': ['Inter_700Bold'],
+        'display-semibold': ['Sora_600SemiBold'],
+        'display-bold': ['Sora_700Bold'],
       },
     },
   },
@@ -494,7 +535,9 @@ module.exports = {
 | Transferencia / PSE | `Landmark` | Efectivo | `Banknote` |
 | Billetera móvil | `Smartphone` | Tarjeta | `CreditCard` |
 | Bre-B | `Zap` | Otro método | `CircleDollarSign` |
-| Agregar | `Plus` | Subir archivo | `Upload` |
+| Agregar / botón central | `Plus` | Subir archivo | `Upload` |
+| Cobros (módulo) | `Wallet` | Gastos (módulo) | `Banknote` |
+| Reportes (módulo) | `TrendingUp` | Historial | `RotateCcw` |
 | Llamar | `Phone` | WhatsApp / mensaje | `MessageCircle` |
 | Correo | `Mail` | Fecha | `CalendarDays` |
 
@@ -635,13 +678,28 @@ Comportamiento común: fondo `overlay`; **trampa de foco** y devolución del foc
 | `FileUploader` *(propuesto)* | Imagen · PDF | Nativo: cámara, galería o archivos. Web: arrastrar y soltar + selector. Progreso, reintento y validación de tipo y tamaño | Archivos `.native` / `.web` |
 | `Header` | Estándar · título grande · modal | Atrás, título y hasta 2 acciones; en web lo reemplaza `PageHeader` | Nativo |
 | `PageHeader` *(propuesto)* | — | `Breadcrumb` + título + descripción + acciones a la derecha | Web (≥ md) |
-| `BottomNavigation` | 4–5 destinos | Icono + etiqueta siempre visibles; *badge* numérico | Compacto |
+| `BottomNavigation` | — | **En desuso**: la reemplaza `TabBar` (5.11) | — |
 | `Sidebar` | Expandida · riel | Selector de organización arriba y menú de usuario abajo; contraíble | Medio / expandido |
 | `Breadcrumb` | — | Solo web; el último nivel no es enlace | Web |
 | `Pagination` | — | Web: páginas + tamaño de página (20/50/100). Nativo: *scroll* infinito | Web |
 | `Table` / `DataTable` | Densidad cómoda · compacta | Ver 7.8; en compacto se transforma en lista de tarjetas | `.web` / `.native` |
 
 ---
+
+### 5.11. Componentes de la dirección Billetera
+
+Componen las pantallas de inicio del arrendador y del inquilino ([ADR-0015](../decisions/0015-direccion-visual-billetera.md)).
+
+| Componente | Qué es | El consumidor provee | Reglas |
+|---|---|---|---|
+| **`BalanceHeader`** | Bloque de color con degradado (`hero-*`), esquinas inferiores `radius-4xl`, avatar, organización, notificaciones y **una** cifra protagonista centrada (`balance`). | `label`, `amountCents`, `caption`, `captionIcon`, `userName`, `organization`, `notifications`, `tone` (`indigo` · `night`) | Una sola cifra; el avance va en la píldora. Deja 72 px libres abajo para `ActionCard`. |
+| **`ActionCard`** | Tarjeta blanca flotante (`elevation-float`, `radius-2xl`) montada 52 px sobre el encabezado, con 3 o 4 acciones. | `items` (`label`, `icon`, `badge?`, `onPress`), `overlap` | Etiquetas de máximo dos palabras; el contador usa `highlight-orange`. |
+| **`ModuleGrid`** | Cuadrícula de 4 columnas con cuadros de color por módulo (`module-*`, `radius-2xl`) y su etiqueta. | `items` (`label`, `icon`, `tone`, `onPress`) | Máximo 8; el octavo es "Más". Cada módulo conserva su color en toda la app. |
+| **`SectionHeader`** | Título de sección en Sora (`section`) con enlace opcional "Ver todo" de 44 pt. | `title`, `id`, `actionLabel`, `href`/`onAction` | La sección usa `aria-labelledby` con el `id`. |
+| **`HighlightCarousel`** + **`HighlightCard`** | Carrusel horizontal con *scroll snap*; tarjetas de 286 × 156, `radius-3xl`; la siguiente asoma. | `tone` (`night` · `orange` · `aqua`), `eyebrow`, `title`, `meta`, `onPress` | `night` = pagos por revisar, `orange` = cobros vencidos, `aqua` = contratos por vencer. El texto siempre dice qué es. Sin elementos: tarjeta "Todo al día". |
+| **`TabBar`** | Barra inferior de 76 con 4 destinos (icono + etiqueta) y botón central elevado de 60 (`fab-shadow` + anillo `card`). | `items`, `value`, `onValueChange`, `centerAction` | Reemplaza a `BottomNavigation`. El botón central abre una hoja de creación. |
+
+En nativo, `BalanceHeader` usa `expo-linear-gradient`; el resto son composiciones de `View`, `Pressable` y `ScrollView` horizontal con `snapToInterval`.
 
 ## 6. Componentes de dominio
 
@@ -688,20 +746,21 @@ type PropertyCardProps = {
 
 ### 7.1. Estructura de la aplicación (*app shell*)
 
-**Arrendador**
+**Arrendador** (dirección Billetera, [ADR-0015](../decisions/0015-direccion-visual-billetera.md))
 
-| Sección | Compacto (barra inferior) | Medio (riel) | Expandido (barra lateral) |
+| Destino | Compacto (`TabBar`) | Medio (riel) | Expandido (barra lateral) |
 |---|---|---|---|
 | Inicio | ✅ Pestaña | ✅ | ✅ |
-| Inmuebles | ✅ Pestaña | ✅ | ✅ |
-| Contratos | ✅ Pestaña | ✅ | ✅ |
 | Finanzas | ✅ Pestaña | ✅ | ✅ |
-| Inquilinos | Dentro de "Más" | ✅ | ✅ |
-| Cuenta | Dentro de "Más" | ✅ (abajo) | Menú de usuario (abajo) |
+| Crear | Botón central: hoja con Registrar pago, Inmueble, Inquilino y Contrato | Botón "+ Crear" arriba del riel | Botón "+ Crear" en la barra superior |
+| Contratos | ✅ Pestaña | ✅ | ✅ |
+| Cuenta | ✅ Pestaña | ✅ (abajo) | Menú de usuario (abajo) |
+| Inmuebles, Inquilinos | Cuadrícula "Gestión" del inicio | ✅ | ✅ |
+| Cobros, Gastos, Documentos, Reportes | Cuadrícula "Gestión" del inicio | Dentro de Finanzas | ✅ |
 
-El plan define 6 secciones, pero las guías de iOS y Android recomiendan **de 3 a 5 pestañas**. Se propone **Inicio · Inmuebles · Contratos · Finanzas · Más**, con Inquilinos como primera opción de "Más" y accesible también desde las fichas de contrato e inmueble. **Validar en pruebas con usuarios**; la alternativa es intercambiar Contratos e Inquilinos.
+La barra inferior tiene cuatro destinos y un botón central para crear. Inmuebles e Inquilinos se abren desde la cuadrícula "Gestión", que funciona como lanzador de módulos. **Validar en pruebas con usuarios** que se encuentra Inmuebles sin pestaña propia; la alternativa es sustituir Contratos por Inmuebles en la barra.
 
-**Inquilino:** Inicio · Mi contrato · Pagos · Documentos · Cuenta (5 pestañas, sin cambios respecto al plan). En web, las mismas secciones en una barra lateral sencilla.
+**Inquilino:** Inicio · Pagos · [Reportar pago] · Mi contrato · Cuenta. Su cuadrícula del inicio tiene Contrato, Comprobantes, Documentos y Ayuda. En web, las mismas secciones en una barra lateral sencilla.
 
 ```text
 Escritorio (≥ 1024)
@@ -720,43 +779,46 @@ Escritorio (≥ 1024)
 └─────────────┴────────────────────────────────────────────────┘
 ```
 
-### 7.2. Dashboard
+### 7.2. Inicio (dirección Billetera)
 
-Orden por **urgencia**, no por tipo de dato:
+De arriba abajo, siguiendo la versión D aprobada del lienzo:
 
-1. **Cifra protagonista:** ingresos del período frente a lo esperado (`display` + `Progress`).
-2. **Indicadores:** pendiente, cartera vencida, ocupación (inmuebles arrendados / total).
-3. **"Requiere tu atención":** pagos en revisión, cobros vencidos y contratos por vencer, con contador y enlace. Si no hay nada: "Todo al día".
-4. **Acciones rápidas:** Registrar inmueble, Registrar inquilino, Crear contrato, Registrar pago (plan §3.1).
-5. En expandido: gráfico de ingresos de los últimos 12 meses y actividad reciente.
+1. **`BalanceHeader`:** el recaudado del mes como cifra protagonista (`balance`) y el avance en la píldora ("86 % de $ 9.800.000 esperados"). Arriba: avatar (Cuenta), organización y notificaciones.
+2. **`ActionCard`:** Registrar pago, Revisar pagos (con contador), Nuevo cobro e Historial.
+3. **"Gestión" (`ModuleGrid`):** Inmuebles, Inquilinos, Contratos, Cobros, Gastos, Documentos, Reportes y Más.
+4. **"Requiere tu atención" (`HighlightCarousel`):** pagos por revisar (`night`), cobros vencidos (`orange`) y contratos por vencer (`aqua`), ordenados por urgencia. Si no hay nada: una tarjeta "Todo al día".
+5. **`TabBar`** con el botón central "Crear".
 
 ```text
-Móvil (360 pt)
+Móvil (390 pt) · ░ = encabezado índigo
 ┌──────────────────────────────┐
-│ Hola, Ana          [Campana] │
-│ Mi organización ▾            │
+│░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░│
+│░(AL)  Inmuebles López  [Not]░│
+│░   Recaudado en noviembre   ░│
+│░        $ 8.450.000         ░│
+│░ ↗ 86 % de $ 9.800.000 esp. ░│
+│░ ╭────────────────────────╮ ░│
+│░░│Registrar Revisar Nuevo │░░│
+│  │  pago  pagos(2) cobro  │  │
+│  ╰────────────────────────╯  │
+│ Gestión                      │
+│ [Inm] [Inq] [Con] [Cob]      │
+│ [Gas] [Doc] [Rep] [Más]      │
+│ Requiere tu atención Ver todo│
+│ ╭──────────────╮ ╭─────────  │
+│ │ 2 pagos por  │ │ Cobro venc│
+│ │ revisar   ▦▦ │ │ $ 600.000 │
+│ ╰──────────────╯ ╰─────────  │
 ├──────────────────────────────┤
-│ Ingresos de noviembre        │
-│ $ 8.450.000                  │
-│ de $ 9.800.000 esperados     │
-│ ████████████████░░░   86 %   │
-├──────────────┬───────────────┤
-│ Pendiente    │ Vencido       │
-│ $ 1.350.000  │ $ 600.000     │
-│ 3 cobros     │ 1 cobro       │
-├──────────────┴───────────────┤
-│ Requiere tu atención         │
-│  2 pagos en revisión       › │
-│  Apto 301 vence en 28 días › │
-├──────────────────────────────┤
-│ [+ Inmueble]   [+ Inquilino] │
-│ [+ Contrato]   [+ Pago]      │
-├──────────────────────────────┤
-│ Inicio Inmueb Contr. Fin. Más│
+│ Inicio Finanzas (+) Contr Cta│
 └──────────────────────────────┘
 ```
 
-**Primera vez:** el dashboard vacío muestra una lista de primeros pasos con progreso (registrar inmueble → registrar inquilino → crear contrato → invitar al inquilino).
+**Inquilino:** el encabezado muestra el total pendiente ("$ 1.430.000 · vence el 5 dic") o "Estás al día"; su `ActionCard` tiene Reportar pago, Mi contrato, Comprobantes e Historial.
+
+**Expandido (web):** el encabezado se convierte en una franja con el saldo a la izquierda e indicadores (por cobrar, vencido, ocupación) a la derecha. "Gestión" no se muestra porque la barra lateral ya lista los módulos, y se añade el gráfico de ingresos de los últimos 12 meses.
+
+**Primera vez:** en lugar del carrusel aparece una tarjeta de primeros pasos con progreso (registrar inmueble → registrar inquilino → crear contrato → invitar al inquilino), y el encabezado muestra "$ 0 · Aún no tienes cobros".
 
 ### 7.3. Listados
 
@@ -984,7 +1046,16 @@ Ruta `src/app/(dev)/catalog` disponible solo en desarrollo y *preview*: muestra 
 
 | Fase | Entregables del Design System |
 |---|---|
-| **F1 · Fundamentos y administración** | Tokens (claro), fuentes, `cn`, `Text`, `Button`, `IconButton`, `Input`, `Textarea`, `FormField`, `Select`, `DatePicker`, `Checkbox`, `Switch`, `RadioGroup`, `Card`, `Badge`/`StatusBadge`, `Avatar`, `Separator`, `Tabs`, `Skeleton`, `EmptyState`, `ErrorState`, `Dialog`, `AlertDialog`, `Sheet`, `ActionSheet`, `Toast`, `Alert`, `Header`, `BottomNavigation`, `Sidebar`, `PageHeader`, `ListItem`, `SearchInput`, `FilterChip`, `FileUploader`, `OfflineBanner`, `PropertyCard`, `TenantCard`, `LeaseCard`, `PropertyGallery`, `OrgSwitcher`. Catálogo y reglas de lint. |
+| **F1 · Fundamentos y administración** | Tokens (claro), fuentes, `cn`, `Text`, `Button`, `IconButton`, `Input`, `Textarea`, `FormField`, `Select`, `DatePicker`, `Checkbox`, `Switch`, `RadioGroup`, `Card`, `Badge`/`StatusBadge`, `Avatar`, `Separator`, `Tabs`, `Skeleton`, `EmptyState`, `ErrorState`, `Dialog`, `AlertDialog`, `Sheet`, `ActionSheet`, `Toast`, `Alert`, `Header`, `Sidebar`, `PageHeader`, `ListItem`, `SearchInput`, `FilterChip`, `FileUploader`, `OfflineBanner`, `PropertyCard`, `TenantCard`, `LeaseCard`, `PropertyGallery`, `OrgSwitcher`. Grupo Billetera: `BalanceHeader`, `ActionCard`, `ModuleGrid`, `SectionHeader`, `HighlightCarousel`/`HighlightCard` y `TabBar`. Catálogo y reglas de lint. |
 | **F2 · Cobros y pagos** | `MoneyInput`, `MoneyText`, `DataTable`, `Pagination`, `Progress`, `DateRangePicker`, `ChargeSummary`, `PaymentCard`, `PaymentStatus`, `ReceiptViewer`, `FinancialSummary`/`StatTile`, `AccountStatement`, gráficos (ingresos por mes, cartera por antigüedad). Regresión visual. |
 | **F3 · Automatización y servicios** | Centro de notificaciones, **activación del modo oscuro**, componentes de servicios públicos y mantenimiento, *checkout* de la pasarela. |
 | **F4 · SaaS** | Gestión de miembros y permisos, acciones masivas en tablas, panel empresarial, pantallas de planes y suscripción. |
+
+---
+
+## 12. Registro de cambios
+
+| Versión | Fecha | Cambio |
+|---|---|---|
+| 1.1 | 17 nov 2026 | Dirección visual **Billetera** aprobada ([ADR-0015](../decisions/0015-direccion-visual-billetera.md)): Sora para cifras y títulos, radios `2xl`/`3xl`/`4xl`, tokens `hero-*`, `module-*` y `highlight-*`, sombras `elevation-float` y `fab-shadow`, grupo de componentes Billetera (5.11), `TabBar` en lugar de `BottomNavigation` y nueva estructura de navegación e inicio (7.1, 7.2). |
+| 1.0 | 17 nov 2026 | Primera versión: principios, tokens, componentes base y de dominio, patrones, accesibilidad, contenido y gobernanza. |

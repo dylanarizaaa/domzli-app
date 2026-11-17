@@ -20,6 +20,7 @@ Cada ADR documenta **una** decisión con alternativas reales: el contexto, la de
 | [0012](0012-storage-privado.md) | Storage privado con rutas por organización y URLs firmadas | Propuesta |
 | [0013](0013-estrategia-de-pruebas.md) | pgTAP para RLS y RPC, Vitest para lógica pura, Jest + RNTL para componentes | Propuesta |
 | [0014](0014-outbox-de-notificaciones.md) | Notificaciones mediante *outbox* transaccional | Propuesta |
+| [0015](0015-direccion-visual-billetera.md) | Dirección visual "Billetera digital" para las pantallas de inicio | Aceptada |
 
 ## Plantilla
 

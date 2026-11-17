@@ -1594,6 +1594,7 @@ Metas: 100 % de las ramas de las RPC financieras cubiertas en pgTAP, todas las t
 | [0012](../decisions/0012-storage-privado.md) | Storage privado con rutas por organización y URLs firmadas | Propuesta |
 | [0013](../decisions/0013-estrategia-de-pruebas.md) | pgTAP para RLS y RPC, Vitest para lógica pura, Jest + RNTL para componentes | Propuesta |
 | [0014](../decisions/0014-outbox-de-notificaciones.md) | Notificaciones mediante *outbox* transaccional | Propuesta |
+| [0015](../decisions/0015-direccion-visual-billetera.md) | Dirección visual "Billetera digital" para las pantallas de inicio | Aceptada |
 
 ---
 
@@ -1654,7 +1655,7 @@ Las decisiones 1 a 10 vienen del plan (§15). Las 11 a 14 surgen del diseño té
 | 11 | Pruebas de componentes con Jest (Vitest para lógica pura) | Compatibilidad con React Native Testing Library. |
 | 12 | Portal del inquilino bajo `/portal` | Evita colisiones de rutas web entre los grupos `(landlord)` y `(tenant)`. |
 | 13 | Nuevas carpetas `src/theme/` y `supabase/tests/` | Tokens del Design System y pruebas de base de datos. |
-| 14 | Navegación móvil del arrendador con 5 pestañas | Las guías de plataforma recomiendan 3–5 pestañas; ver la [especificación del Design System, §7.1](../design-system/design-system-spec.md#71-estructura-de-la-aplicación-app-shell). |
+| 14 | Navegación móvil del arrendador: 4 destinos (Inicio, Finanzas, Contratos, Cuenta) + botón central "Crear"; Inmuebles e Inquilinos se abren desde la cuadrícula "Gestión" del inicio | Dirección visual Billetera ([ADR-0015](../decisions/0015-direccion-visual-billetera.md)) y guías de plataforma (3–5 destinos); ver la [especificación del Design System, §7.1](../design-system/design-system-spec.md#71-estructura-de-la-aplicación-app-shell). |
 
 ---
 
